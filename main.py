@@ -22,10 +22,10 @@ class Game:
         cls.total_matches += 1
 
     def apply_score(self, val):
-        if val > 0:
-           self.user_score += val
-        if val < 0:
-            self.cpu_score += abs(val)
+        if val == 1:
+           self.user_score += 1
+        elif val == -1:
+            self.cpu_score += 1
     
     def cpu_pick(self):
         self.cpu_move = random.choice(GAME_MOVES)
@@ -52,7 +52,7 @@ def round_message(val):
 def user_choice():
     return Prompt.ask("What will your move be?", choices=GAME_MOVES)
 
-def play_agin():
+def play_again():
     return Confirm.ask("Play again?")
 
 def game_state(value):
@@ -70,18 +70,19 @@ def run():
             round_message(i)
 
             game.cpu_pick()
-        
-            outcome = game.combination(user_choice())
-            input("The Computer Chose [Enter] ...")
+            user_move = user_choice()
+            outcome = game.combination(user_move)
+            input(f"You Chose {user_move} [E]".upper())
+            input("The Computer Chose... [E] ".upper())
             print(game.cpu_move.upper())
 
-            if outcome:
+            if outcome is True:
                 print("Round Won!")
                 game.apply_score(1)
             elif outcome is False:
                 print("Round Lost!")
                 game.apply_score(-1)
-            elif outcome is None:
+            else:
                 print("Round Tied!")
         
 
@@ -98,9 +99,11 @@ def run():
                     print(game_state(tie_score))
                 
                 game.cpu_pick()
-                tie_rounds = game.combination(user_choice())
-                
-                input("The Computer Chose [Enter] ...")
+                user_move = user_choice
+                tie_rounds = game.combination(user_move)
+
+                input(f"You Chose {user_move} [E]".upper())
+                input("The Computer Chose... [E]".upper())
                 print(game.cpu_move.upper())
 
                 if tie_rounds:
@@ -116,8 +119,8 @@ def run():
 
             print("YOU WON AGAINST THE COMPUTER!") if tie_score > 0 else print("THE COMPUTER BEAT YOU!")
             
-        if not play_agin():
-            print(f"THANKS FOR PLAYING! [Total Matches Played]: {game.total_matches}")
+        if not play_again():
+            print(f"THANKS FOR PLAYING! [Total Matches Played]: {Game.total_matches}")
             break
     
 
