@@ -1,75 +1,90 @@
-from rich.prompt import Prompt
+from rich.prompt import Prompt, Confirm
 from rich.console import Console
-from rich.prompt import Confirm
 from rich.text import Text
 
+
 GAME_TEXT = {
-    "welcome_msg" : "Welcome to RPSS! Each match is best of three — win 2 rounds to win the match. |TWIST|: If the match ends in a tie, the winner must have two more wins than losses.",
-    "end_msg" : "THANKS FOR PLAYING! [Total Matches Played]:",
-    "move" : "What will your move be?",
-    "victory" : "YOU WON THE MATCH!",
-    "tiebreaker" : "TIEBREAKER MATCH!",
-    "defeat" : "THE COMPUTER DEFEATED YOU!",
-    "won" : "Round Won!",
-    "tie" : "Round Lost!",
-    "lost" : "Round Tied!",
-    "repeat" : "Play Again?"
+    "welcome_msg": (
+        "Welcome to RPSS! Each match is best of three — "
+        "win 2 rounds to win the match. "
+        "|TWIST|: If the match ends in a tie, the winner must "
+        "have two more wins than losses."
+    ),
+    "end_msg": "THANKS FOR PLAYING! [Total Matches Played]:",
+    "victory": "YOU WON THE MATCH!",
+    "defeat": "THE COMPUTER DEFEATED YOU!",
+    "tiebreaker": "TIEBREAKER MATCH!",
+    "win": "Round Won!",
+    "lose": "Round Lost!",
+    "tie": "Round Tied!",
+    "move": "What will your move be?",
+    "repeat": "Play Again?",
+    "even": "EVEN STEVEN!",
+    "cpu_leads": "THE COMPUTER IS BEATING YOU!",
+    "user_leads": "ONE MORE WIN AWAY FROM VICTORY!",
 }
 
-class UI:     
-    def __init__(self):      
-        self.cons = Console()     
-        self.theme = {
-            "won" : "bold green",
-            "tie" : "yellow blink",
-            "lost" : "bold red",
-            "reg" : "white bold",
-            "heading" : "dim bold",
-            "subheading" : "white"
-        }   
+
+class UI:
+    def __init__(self):
+        self.console = Console()
+        self.styles = {
+            "win": "bold green",
+            "lose": "bold red",
+            "tie": "yellow blink",
+            "base": "white",
+            "heading": "dim bold",
+        }
 
     def welcome_message(self):
-        self.cons.print(GAME_TEXT["welcome_msg"], style=self.theme["heading"])
-           
-    def user_choice(self, moves):
-        return Prompt.ask(Text(GAME_TEXT["move"], style=self.theme["reg"]), choices=moves, console=self.cons, case_sensitive=False).lower().strip()
-    
-    def round_message(self, val): 
-        self.cons.print(f"| Round {val} |", style=self.theme["reg"])
-    
-    def end_message(self, matches):
-        self.cons.print(f"{GAME_TEXT['end_msg']} {matches}", style=self.theme["reg"])
-    
-    def display_moves(self, user, cpu):
-        self.cons.input(Text(f"| You Chose {user} | [E]", style=self.theme["subheading"]))
-        self.cons.input(Text(f"| The Computer Chose {cpu} | [E]", style=self.theme["subheading"]))
+        self.console.print(GAME_TEXT["welcome_msg"], style=self.styles["heading"])
 
-    def play_again(self):
-        return Confirm.ask(Text(GAME_TEXT["repeat"], style=self.theme["reg"]), console=self.cons)
-    
+    def user_choice(self, moves):
+        return (
+            Prompt.ask(
+                Text(GAME_TEXT["move"], style=self.styles["base"]),
+                choices=moves,
+                case_sensitive=False,
+                console=self.console,
+            )
+            .lower()
+            .strip()
+        )
+
+    def round_message(self, number):
+        self.console.print(f"| Round {number} |", style=self.styles["heading"])
+
+    def display_result(self, outcome):
+        self.console.print(
+            GAME_TEXT[outcome],
+            style=self.styles[outcome],
+        )
+
+    def show_leader(self, leader):
+        if leader is True:
+            self.console.print(GAME_TEXT["user_leads"], style=self.styles["win"])
+        elif leader is False:
+            self.console.print(GAME_TEXT["cpu_leads"], style=self.styles["lose"])
+        else:
+            self.console.print(GAME_TEXT["even"], style=self.styles["tie"])
+
     def tiebreaker_heading(self):
-        self.cons.print(GAME_TEXT["tiebreaker"], style=self.theme["heading"])
+        self.console.print(GAME_TEXT["tiebreaker"], style=self.styles["heading"])
 
     def victory(self):
-        self.cons.print(GAME_TEXT["victory"], style=self.theme["won"])
+        self.console.print(GAME_TEXT["victory"], style=self.styles["win"])
 
     def defeat(self):
-          self.cons.print(GAME_TEXT["defeat"], style=self.theme["lost"])
+        self.console.print(GAME_TEXT["defeat"], style=self.styles["lose"])
 
-    def show_position(self, value):
-        if value is True:
-            self.cons.print("ONE MORE WIN AWAY FROM VICTORY!", style=self.theme["won"])
-        elif value is False:
-            self.cons.print("THE COMPUTER IS BEATING YOU!", style=self.theme["lost"])
-        else:
-            self.cons.print("EVEN STEVEN!", style=self.theme["tie"])
+    def play_again(self):
+        return Confirm.ask(
+            Text(GAME_TEXT["repeat"], style=self.styles["base"]),
+            console=self.console,
+        )
 
-    def display_result(self, result):
-        if result == "tie":
-            self.cons.print("Round Tied!", style=self.theme["tie"])
-        elif result == "win":
-            self.cons.print("Round Won!", style=self.theme["won"])
-        else:
-            self.cons.print("Round Lost!", style=self.theme["lost"])
-
-     
+    def end_message(self, matches):
+        self.console.print(
+            f"{GAME_TEXT['end_msg']} {matches}",
+            style=self.styles["heading"],
+        )
