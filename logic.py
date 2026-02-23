@@ -32,32 +32,30 @@ class Game:
             "lizard" : {"spock", "paper"},
             "spock" : {"rock", "scissors"}
         }
-        cpu_move = cpu_move.lower().strip()
-        user_move = user_move.lower().strip()
-
-        if user_move == cpu_move: return None
-        return True if cpu_move in win_conditions[user_move] else False
+        
+        if user_move == cpu_move: return "tie"
+        return "won" if cpu_move in win_conditions[user_move] else "lost"
     
     def isnot_tie(self):
         return self.user_score != self.cpu_score
     
-    def who_won(self):
-       print("\nYOU WON THE MATCH!\n") if self.user_score > self.cpu_score else print("\nTHE COMPUTER DEFEATED YOU!\n")
+    def user_won(self):
+       return self.user_score > self.cpu_score 
 
     def tiebreaker(self):
-        return True if abs(self.user_score - self.cpu_score) < 2 else False 
+        return abs(self.user_score - self.cpu_score) < 2
     
     def result(self, val):
-        if val is True:
-            print("Round Won!")
+        if val == "won":
             self.apply_score(1)
-        elif val is False:
-            print("Round Lost!")
+            return "win" 
+        elif val == "lost":
             self.apply_score(-1)
+            return "lose"
         else:
-            print("Round Tied!")
-
+            return "tie"
     def find_position(self):
         if abs(self.user_score - self.cpu_score) == 0: return None
-        return True if self.user_score > self.cpu_score else False
+        return self.user_score > self.cpu_score 
+    
     
