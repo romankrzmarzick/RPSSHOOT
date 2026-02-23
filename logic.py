@@ -61,15 +61,3 @@ class Game:
         if abs(self.user_score - self.cpu_score) == 0: return None
         return True if self.user_score > self.cpu_score else False
     
-GAME_TEXT = {
-    "welcome_msg" : "Welcome to RPSS! Each match is best of three — win 2 rounds to win the match. |TWIST|: If the match ends in a tie, the winner must have two more wins than losses.",
-    "end_msg" : "THANKS FOR PLAYING! [Total Matches Played]:",
-    "move" : "What will your move be?",
-    "victory" : "YOU WON THE MATCH!",
-    "tiebreaker" : "TIEBREAKER MATCH!",
-    "defeat" : "THE COMPUTER DEFEATED YOU!",
-    "won" : "Round Won!",
-    "tie" : "Round Lost!",
-    "lost" : "Round Tied!",
-    "repeat" : "Play Again?"
-}
