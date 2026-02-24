@@ -2,6 +2,14 @@ import random
 
 GAME_MOVES = ["rock", "paper", "scissors", "lizard", "spock"]
 
+WINNING_MOVES = {
+    "rock": {"scissors", "lizard"},
+    "paper": {"rock", "spock"},
+    "scissors": {"paper", "lizard"},
+    "lizard": {"spock", "paper"},
+    "spock": {"rock", "scissors"},
+}
+
 
 class Game:
     total_matches = 0
@@ -19,18 +27,9 @@ class Game:
         return random.choice(GAME_MOVES)
 
     def round_outcome(self, user_move, cpu_move):
-        win_conditions = {
-            "rock": {"scissors", "lizard"},
-            "paper": {"rock", "spock"},
-            "scissors": {"paper", "lizard"},
-            "lizard": {"spock", "paper"},
-            "spock": {"rock", "scissors"},
-        }
-
         if user_move == cpu_move:
             return "tie"
-
-        return "win" if cpu_move in win_conditions[user_move] else "lose"
+        return "win" if cpu_move in WINNING_MOVES[user_move] else "lose"
 
     def apply_result(self, outcome):
         if outcome == "win":
