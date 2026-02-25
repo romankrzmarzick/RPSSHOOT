@@ -1,6 +1,8 @@
 import random
+from collections import Counter
 
-GAME_MOVES = ["rock", "paper", "scissors", "lizard", "spock"]
+CLASSICAL_MODE = ["rock", "paper", "scissors"]
+NEW_MODE = ["rock", "paper", "scissors", "lizard", "spock"]
 
 WINNING_MOVES = {
     "rock": {"scissors", "lizard"},
@@ -12,19 +14,43 @@ WINNING_MOVES = {
 
 
 class Game:
-    total_matches = 0
-
     def __init__(self):
-        self.__class__.match_played()
         self.user_score = 0
         self.cpu_score = 0
+        self.total_matches = 0
+        self.total_wins = 0 
+        self.winning_moves = []
+        self.best_move = ""
+        self.game_moves = []
+        self.rounds_played = 0
+    def define_game_moves(self, answer):
+        if answer == "classical":
+            self.game_moves = CLASSICAL_MODE
+        else: 
+            self.game_moves = NEW_MODE
+    
+    def add_round(self):
+        self.rounds_played += 1
 
-    @classmethod
-    def match_played(cls):
-        cls.total_matches += 1
+    def win_match(self):
+       self.total_wins += 1
+
+    def matches_played(self):
+       self.total_matches += 1
+
+    def add_best_moves(self, outcome, move):
+        if outcome == "win":
+            self.winning_moves.append(move)
+
+    def find_best_move(self):
+        most_common = Counter(self.winning_moves).most_common(1)
+        self.best_move = most_common[0][0] if most_common else None
+
+    def best_move_win_pct(self):
+        return round((len([x for x in self.winning_moves if self.best_move in x]) / (self.rounds_played)) * 100, 2)
 
     def cpu_pick(self):
-        return random.choice(GAME_MOVES)
+        return random.choice(self.game_moves)
 
     def round_outcome(self, user_move, cpu_move):
         if user_move == cpu_move:
@@ -50,3 +76,4 @@ class Game:
         if self.user_score == self.cpu_score:
             return None
         return self.user_score > self.cpu_score
+    

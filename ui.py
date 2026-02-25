@@ -10,9 +10,8 @@ GAME_TEXT = {
         "|TWIST|: If the match ends in a tie, the winner must "
         "have two more wins than losses."
     ),
-    "what_game" : "[Game Selection]",
+    "what_games" : "[Game Selection]",
     "games" : "|What do you want the match to be best out of?|",
-    "end_msg": "THANKS FOR PLAYING! [Total Matches Played]:",
     "victory": "YOU WON THE MATCH!",
     "defeat": "THE COMPUTER DEFEATED YOU!",
     "tiebreaker": "TIEBREAKER MATCH!",
@@ -94,9 +93,9 @@ class UI:
             console=self.console,
         )
 
-    def end_message(self, matches):
+    def end_message(self, matches_played, matches_won, best_move, move_win_pct ):
         self.console.print(
-            f"{GAME_TEXT['end_msg']} {matches}",
+            f"[Thanks For Playing!] STATS FOR REGULAR PLAY -> [Matches Played: {matches_played}] [Matches Won: {matches_won}] [Won {move_win_pct}% of games with {best_move}]",
             style=self.styles["subheading"],
         )
 
@@ -125,3 +124,4 @@ class UI:
             .lower()
             .strip()
         )
+    
