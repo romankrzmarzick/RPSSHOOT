@@ -1,29 +1,36 @@
 from logic import Game
 from ui import UI
-
+from computer import ai
+import data
 
 def run():
     game = Game()
     ui = UI()
     ui.welcome_message()
-
-    selected_rounds = ui.amount_of_games()
-    game_version = ui.classic_or_new()
-    game.define_game_moves(game_version)
     while True:
-       
+        selected_rounds = ui.amount_of_games()
+        game_version = ui.classic_or_new()
+        game.define_game_moves(game_version)
+
+
         for round_number in range(1, selected_rounds + 1):
             if game.user_score > (selected_rounds / 2) or game.cpu_score > (selected_rounds / 2):
                 break
 
             ui.round_message(round_number, game.user_score, game.cpu_score)
-
+            while True:
+                user_move = ui.user_choice(game.game_moves)
+                if user_move == "?":
+                    ui.game_guide()
+                else: 
+                    break
+            if user_move == "q":
+                break
             cpu_move = game.cpu_pick()
-            user_move = ui.user_choice(game.game_moves)
 
             outcome = game.round_outcome(user_move, cpu_move)
             
-            game.add_best_moves(outcome, user_move)
+            data.store_move(user_move, outcome) 
             
             game.apply_result(outcome)
             ui.display_result(outcome)
@@ -31,6 +38,8 @@ def run():
             ui.show_cpu_move(cpu_move)
             
             game.add_round()
+        if user_move == "q":
+            break
 
         if not game.scores_tied():
             if game.user_won():

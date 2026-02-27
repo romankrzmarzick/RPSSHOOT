@@ -2,7 +2,7 @@ from rich.prompt import Prompt, Confirm
 from rich.console import Console
 from rich.text import Text
 
-# |Exit[q]| |Rules[?]| 
+
 GAME_TEXT = {
     "welcome_msg": (
         "Welcome to RPSS! Each match is best of three — "
@@ -18,7 +18,7 @@ GAME_TEXT = {
     "win": "Round Won!",
     "lose": "Round Lost!",
     "tie": "Round Tied!",
-    "input": "| What will be your move? |",
+    "input": "|Exit[q]| |Rules[?]| | What will be your move? |",
     "repeat": "Play Again?",
     "even": "EVEN STEVEN!",
     "cpu_leads": "THE COMPUTER IS BEATING YOU!",
@@ -51,7 +51,7 @@ class UI:
         return (
             Prompt.ask(
                 Text(GAME_TEXT["input"], style=self.styles["base"]),
-                choices=moves,
+                choices=(*moves, "q", "?") ,
                 case_sensitive=False,
                 console=self.console,
             )
@@ -100,7 +100,7 @@ class UI:
         )
 
     def game_guide(self):
-        self.console.print(GAME_TEXT[""], style=self.styles["info"])
+        self.console.print(GAME_TEXT["game_rules"], style=self.styles["info"])
 
     def amount_of_games(self):
         return int(

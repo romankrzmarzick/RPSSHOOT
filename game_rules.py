@@ -1,5 +1,6 @@
-import random
+
 from collections import Counter
+import data
 
 CLASSICAL_MODE = ["rock", "paper", "scissors"]
 NEW_MODE = ["rock", "paper", "scissors", "lizard", "spock"]
@@ -19,7 +20,6 @@ class Game:
         self.cpu_score = 0
         self.total_matches = 0
         self.total_wins = 0 
-        self.winning_moves = []
         self.best_move = ""
         self.game_moves = []
         self.rounds_played = 0
@@ -38,19 +38,13 @@ class Game:
     def matches_played(self):
        self.total_matches += 1
 
-    def add_best_moves(self, outcome, move):
-        if outcome == "win":
-            self.winning_moves.append(move)
-
     def find_best_move(self):
-        most_common = Counter(self.winning_moves).most_common(1)
+        most_common = Counter(data.user_move_history).most_common(1)
         self.best_move = most_common[0][0] if most_common else None
 
     def best_move_win_pct(self):
-        return round((len([x for x in self.winning_moves if self.best_move in x]) / (self.rounds_played)) * 100, 2)
+        return round((len([x for x in data.user_move_history if self.best_move in x]) / (self.rounds_played)) * 100, 2)
 
-    def cpu_pick(self):
-        return random.choice(self.game_moves)
 
     def round_outcome(self, user_move, cpu_move):
         if user_move == cpu_move:
