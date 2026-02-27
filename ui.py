@@ -95,7 +95,7 @@ class UI:
 
     def end_message(self, matches_played, matches_won, best_move, move_win_pct ):
         self.console.print(
-            f"[Thanks For Playing!] STATS FOR REGULAR PLAY -> [Matches Played: {matches_played}] [Matches Won: {matches_won}] [Won {move_win_pct}% of games with {best_move}]",
+            f"[Thanks For Playing!] STATS FOR REGULAR PLAY -> [Matches Played: {matches_played}] [Matches Won: {matches_won}] [Won {move_win_pct}% of games with {best_move} (best move)]",
             style=self.styles["subheading"],
         )
 
