@@ -1,85 +1,111 @@
-from logic import Game
-from ui import UI
-from computer import ai
-import data
+from game_rules import Game
+from ui import Interface
+from player import Player
+from player import Robot
+from data import Data
+import sys
 
 def run():
     game = Game()
-    ui = UI()
+    ui = Interface()
+    p1 = Player()
+    robot = Robot()
+    data = Data()
+
     ui.welcome_message()
+    
+    selected_rounds = ui.choose_rounds()
+    game_version = ui.choose_mode()
+    game.change_mode(game_version)
+    game.change_rounds(selected_rounds)
+    
     while True:
-        selected_rounds = ui.amount_of_games()
-        game_version = ui.classic_or_new()
-        game.define_game_moves(game_version)
-
-
-        for round_number in range(1, selected_rounds + 1):
-            if game.user_score > (selected_rounds / 2) or game.cpu_score > (selected_rounds / 2):
+        for current_round in range(1, (selected_rounds + 1)):
+            if p1.score > (selected_rounds / 2) or robot.score > (selected_rounds / 2):
                 break
 
-            ui.round_message(round_number, game.user_score, game.cpu_score)
+            ui.round_state(current_round, p1.score, robot.score)
+
             while True:
-                user_move = ui.user_choice(game.game_moves)
-                if user_move == "?":
-                    ui.game_guide()
-                else: 
+                user_move = ui.choose_move(game.game_mode)
+                if user_move != "?":
                     break
+                ui.game_guide()
+                
             if user_move == "q":
-                break
-            cpu_move = game.cpu_pick()
+                sys.exit()
+            
+            # Computer Chooses its move.       
+            cpu_move = robot.robot_move(game.game_mode)
 
+            # Decides who wins the current round.
             outcome = game.round_outcome(user_move, cpu_move)
             
-            data.store_move(user_move, outcome) 
+            # Data Functions
+            data.record_round(user_move, outcome) 
+            data.add_round()
             
-            game.apply_result(outcome)
-            ui.display_result(outcome)
-            
-            ui.show_cpu_move(cpu_move)
-            
-            game.add_round()
-        if user_move == "q":
-            break
+            if outcome == "win":
+                p1.addpoint()
+            else:
+                robot.addpoint()
 
-        if not game.scores_tied():
-            if game.user_won():
+            # Displays who won the the round and reveals the robot's move.
+            ui.show_round_result(outcome)
+            ui.show_cpu_move(cpu_move)
+
+
+        if not game.scores_tied(p1.score, robot.score):
+            winner = game.decide_winner(p1.score, robot.score)
+            if winner == "user":
                 ui.victory()
-                game.win_match()
+                data.add_match_win()
             else:
                 ui.defeat()
         else:
             ui.tiebreaker_heading()
+            
             first_round = True
 
-            while game.tiebreaker_active():
+            while game.tiebreaker_active(p1.score, robot.score):
                 if not first_round:
-                    ui.show_leader(game.find_leader())
+                    ui.show_leader(data.find_leader(p1.score, robot.score))
 
-                cpu_move = game.cpu_pick()
-                user_move = ui.user_choice(game.game_moves)
+                cpu_move = robot.robot_move(game.game_mode)
+                user_move = ui.choose_move(game.game_mode)
 
                 outcome = game.round_outcome(user_move, cpu_move)
-                game.apply_result(outcome)
-                ui.display_result(outcome)
+                
+                if outcome == "win":
+                    p1.addpoint()
+                else:
+                    robot.addpoint()
+                
+                ui.show_round_result(outcome)
 
                 first_round = False
 
-            if game.user_won():
+            winner = game.decide_winner(p1.score, robot.score)
+            if winner == "user":
                 ui.victory()
-                game.win_match()
+                data.add_match_win()
             else:
                 ui.defeat()
 
-        game.matches_played()
+        data.add_match()
        
 
-        if not ui.play_again():
-            game.find_best_move()
-            ui.end_message(game.total_matches, game.total_wins, game.best_move, game.best_move_win_pct())
+        if not ui.choose_replay():
+            best_move = data.find_best_move()
+            ui.stats(data.matches_played, data.matches_won, data.find_games_lost(), best_move, data.best_move_win_pct(best_move))
+            ui.end_message(p1.name)
+
+            print(data.round_history)
+
             break
             
-        game.cpu_score = 0
-        game.user_score = 0
+        p1.reset_score()
+        robot.reset_score()
 
 
 run()

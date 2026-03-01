@@ -10,118 +10,97 @@ GAME_TEXT = {
         "|TWIST|: If the match ends in a tie, the winner must "
         "have two more wins than losses."
     ),
-    "what_games" : "[Game Selection]",
-    "games" : "|What do you want the match to be best out of?|",
-    "victory": "YOU WON THE MATCH!",
-    "defeat": "THE COMPUTER DEFEATED YOU!",
-    "tiebreaker": "TIEBREAKER MATCH!",
-    "win": "Round Won!",
-    "lose": "Round Lost!",
-    "tie": "Round Tied!",
-    "input": "|Exit[q]| |Rules[?]| | What will be your move? |",
-    "repeat": "Play Again?",
-    "even": "EVEN STEVEN!",
-    "cpu_leads": "THE COMPUTER IS BEATING YOU!",
-    "user_leads": "ONE MORE WIN AWAY FROM VICTORY!",
     "game_rules" : (
         "|Games Rules|\nThe user plays the amount of gamess selected, the first to get the best score from the rounds wins."
         "If scores are still tied, a tiebreaker game commences. In the tiebreaker, the winner must win two times before a loss."
         "Meaning back to back wins isn't required. A tie is meaningless. Example: Win-Tie-Win = Match Won"
         "User can also choose between a classical game or RPS with Spock and Lizard (search online for the rules if needed)."
-    )
+    ),
+    "end_msg" : "Thanks for playing and have a splendid day",
+
+    # --- Match Decisions ---
+    "victory": "YOU WON THE MATCH!",
+    "defeat": "THE COMPUTER DEFEATED YOU!",
+    "tiebreaker": "TIEBREAKER MATCH!",
+   
+    # --- Round Decisions --- 
+    "win": "Round Won!",
+    "lose": "Round Lost!",
+    "tie": "Round Tied!",
+    
+    # --- Inputs ---
+    "input": "|Exit[q]| |Rules[?]| | What will be your move? |",
+    "replay": "Play Again?",
+    "game_mode" : "Game Mode Selection",
+    "games" : "|Pick the amount of rounds for the game|",
+    
+    # --- Tiebreaker Round ---
+    "even": "EVEN STEVEN!",
+    "cpu": "THE COMPUTER IS BEATING YOU!",
+    "user": "ONE MORE WIN AWAY FROM VICTORY!",
 }
 
 
-class UI:
+class Interface:
     def __init__(self):
-        self.console = Console()
+        self.cons = Console()
         self.styles = {
             "win": "bold green",
             "lose": "bold red",
-            "tie": "yellow blink",
+            "tie": "yellow",
             "base": "white",
-            "info": "dim bold",
-            "subheading": "white bold"
+            "fyi": "dim bold",
+            "main": "white bold"
         }   
-
+    
     def welcome_message(self):
-        self.console.print(GAME_TEXT["welcome_msg"], style=self.styles["info"])
-
-    def user_choice(self, moves):
-        return (
-            Prompt.ask(
-                Text(GAME_TEXT["input"], style=self.styles["base"]),
-                choices=(*moves, "q", "?") ,
-                case_sensitive=False,
-                console=self.console,
-            )
-            .lower()
-            .strip()
-        )
-
-    def show_cpu_move(self, cpu_move):
-        self.console.print(f"Computer Chose --> {cpu_move}", style=self.styles["subheading"])
-    def round_message(self, number, user_score, cpu_score):
-        self.console.print(f"|Round {number}| Score -> You: {user_score} | CPU: {cpu_score}", style=self.styles["subheading"])
-
-    def display_result(self, outcome):
-        self.console.print(
-            GAME_TEXT[outcome],
-            style=self.styles[outcome],
-        )
-
-    def show_leader(self, leader):
-        if leader is True:
-            self.console.print(GAME_TEXT["user_leads"], style=self.styles["win"])
-        elif leader is False:
-            self.console.print(GAME_TEXT["cpu_leads"], style=self.styles["lose"])
-        else:
-            self.console.print(GAME_TEXT["even"], style=self.styles["tie"])
-
-    def tiebreaker_heading(self):
-        self.console.print(GAME_TEXT["tiebreaker"], style=self.styles["subheading"])
-
-    def victory(self):
-        self.console.print(GAME_TEXT["victory"], style=self.styles["win"])
-
-    def defeat(self):
-        self.console.print(GAME_TEXT["defeat"], style=self.styles["lose"])
-
-    def play_again(self):
-        return Confirm.ask(
-            Text(GAME_TEXT["repeat"], style=self.styles["base"]),
-            console=self.console,
-        )
-
-    def end_message(self, matches_played, matches_won, best_move, move_win_pct ):
-        self.console.print(
-            f"[Thanks For Playing!] STATS FOR REGULAR PLAY -> [Matches Played: {matches_played}] [Matches Won: {matches_won}] [Won {move_win_pct}% of games with {best_move} (best move)]",
-            style=self.styles["subheading"],
-        )
+        self.cons.print(GAME_TEXT["welcome_msg"], style=self.styles["fyi"])
 
     def game_guide(self):
-        self.console.print(GAME_TEXT["game_rules"], style=self.styles["info"])
+        self.cons.print(GAME_TEXT["game_rules"], style=self.styles["fyi"])
 
-    def amount_of_games(self):
-        return int(
-            Prompt.ask(
-                Text(GAME_TEXT["games"], style=self.styles["base"]),
-                choices=["3", "5", "7"],
-                console=self.console,
-            )
-            .lower()
-            .strip()
-        )
-
-    def classic_or_new(self):
-        return (
-            Prompt.ask(
-                Text(GAME_TEXT["what_games"], style=self.styles["base"]),
-                choices=["Classical", "New"],
-                case_sensitive=False,
-                console=self.console,
-            )
-            .lower()
-            .strip()
-        )
+    def end_message(self, name):
+        self.cons.print(f"\n{GAME_TEXT['end_msg']} {name}!", style=self.styles["base"])
     
+    # --- Round Decisons ---
+    def show_round_result(self, outcome):
+        """The outcome variable will either contain the string 'win', 'lose', or 'tie' for the GAME_TEXT dictionary lookup."""
+        self.cons.print(GAME_TEXT[outcome], style=self.styles[outcome])
+
+    # --- Match Decisions
+    def tiebreaker_heading(self):
+        self.cons.print(GAME_TEXT["tiebreaker"], style=self.styles["main"])
+
+    def victory(self):
+        self.cons.print(GAME_TEXT["victory"], style=self.styles["win"])
+
+    def defeat(self):
+        self.cons.print(GAME_TEXT["defeat"], style=self.styles["lose"])
+
+    # --- User Inputs ---
+    def choose_replay(self):
+        return Confirm.ask(Text(GAME_TEXT["replay"], style=self.styles["main"]), console=self.cons)
+
+    def choose_move(self, moves):
+        return (Prompt.ask(Text(GAME_TEXT["input"], style=self.styles["main"]), choices=[*moves, "q", "?"], case_sensitive=False, console=self.cons).lower().strip())
+    
+    def choose_rounds(self):
+        choices = ["3", "5", "7"]
+        return int(Prompt.ask(Text(GAME_TEXT["games"], style=self.styles["base"]), choices=[*choices], console=self.cons).lower().strip())
+
+    def choose_mode(self):
+        return (Prompt.ask(Text(GAME_TEXT["game_mode"], style=self.styles["base"]), choices=["Classical", "New"], case_sensitive=False, console=self.cons).lower().strip())
+    
+    # --- State/Stats ---
+    def show_leader(self, leader):
+        """The leader variable will either contain the string 'user', 'cpu', or 'even' for the GAME_TEXT dictionary lookup."""
+        self.cons.print(GAME_TEXT[leader], style=self.styles["main"])
+
+    def show_cpu_move(self, cpu_move):
+        self.cons.print(f"Computer Chose --> {cpu_move}", style=self.styles["base"])
+    
+    def round_state(self, number, user_score, cpu_score):
+        self.cons.print(f"|Round {number}| Score -> You: {user_score} | CPU: {cpu_score}", style=self.styles["base"])
+
+    def stats(self, matches_played, matches_won, matches_lost, best_move, pct):
+        self.cons.print(f"Games Played -> {matches_played}\nGames Won -> {matches_won}\nGames Lost -> {matches_lost}\nBest Move -> {pct}% of rounds won used {best_move}")

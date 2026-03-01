@@ -1,11 +1,10 @@
+CLASSICAL = {
+    "rock": "scissors", 
+    "paper" :"scissors",
+    "scissors" : "paper"
+    }
 
-from collections import Counter
-import data
-
-CLASSICAL_MODE = ["rock", "paper", "scissors"]
-NEW_MODE = ["rock", "paper", "scissors", "lizard", "spock"]
-
-WINNING_MOVES = {
+RPSLS = {
     "rock": {"scissors", "lizard"},
     "paper": {"rock", "spock"},
     "scissors": {"paper", "lizard"},
@@ -13,61 +12,34 @@ WINNING_MOVES = {
     "spock": {"rock", "scissors"},
 }
 
+MODES = {
+    "classical" : CLASSICAL,
+    "new" :  RPSLS
+}
+
 
 class Game:
     def __init__(self):
-        self.user_score = 0
-        self.cpu_score = 0
-        self.total_matches = 0
-        self.total_wins = 0 
-        self.best_move = ""
-        self.game_moves = []
-        self.rounds_played = 0
-    def define_game_moves(self, answer):
-        if answer == "classical":
-            self.game_moves = CLASSICAL_MODE
-        else: 
-            self.game_moves = NEW_MODE
-    
-    def add_round(self):
-        self.rounds_played += 1
+        self.game_mode = MODES["new"]
+        self.rounds = 3
 
-    def win_match(self):
-       self.total_wins += 1
+    def change_mode(self, mode):
+        self.game_mode = MODES[mode]
 
-    def matches_played(self):
-       self.total_matches += 1
-
-    def find_best_move(self):
-        most_common = Counter(data.user_move_history).most_common(1)
-        self.best_move = most_common[0][0] if most_common else None
-
-    def best_move_win_pct(self):
-        return round((len([x for x in data.user_move_history if self.best_move in x]) / (self.rounds_played)) * 100, 2)
-
+    def change_rounds(self, num):
+        self.rounds = num
 
     def round_outcome(self, user_move, cpu_move):
         if user_move == cpu_move:
             return "tie"
-        return "win" if cpu_move in WINNING_MOVES[user_move] else "lose"
+        return "win" if cpu_move in self.game_mode else "lose"
 
-    def apply_result(self, outcome):
-        if outcome == "win":
-            self.user_score += 1
-        elif outcome == "lose":
-            self.cpu_score += 1
+    def scores_tied(self, user_score, cpu_score):
+        return user_score == cpu_score
 
-    def scores_tied(self):
-        return self.user_score == self.cpu_score
+    def tiebreaker_active(self, user_score, cpu_score):
+        return abs(user_score - cpu_score) < 2
 
-    def user_won(self):
-        return self.user_score > self.cpu_score
-
-    def tiebreaker_active(self):
-        return abs(self.user_score - self.cpu_score) < 2
-
-    def find_leader(self):
-        if self.user_score == self.cpu_score:
-            return None
-        return self.user_score > self.cpu_score
-    
+    def decide_winner(self, user_score, cpu_score):
+        return "user" if user_score > cpu_score else "cpu"
+   
