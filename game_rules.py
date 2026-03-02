@@ -32,7 +32,7 @@ class Game:
     def round_outcome(self, user_move, cpu_move):
         if user_move == cpu_move:
             return "tie"
-        return "win" if cpu_move in self.game_mode else "lose"
+        return "win" if cpu_move in self.game_mode[user_move] else "lose"
 
     def scores_tied(self, user_score, cpu_score):
         return user_score == cpu_score

@@ -97,7 +97,7 @@ class Interface:
         self.cons.print(GAME_TEXT[leader], style=self.styles["main"])
 
     def show_cpu_move(self, cpu_move):
-        self.cons.print(f"Computer Chose --> {cpu_move}", style=self.styles["base"])
+        self.cons.print(f"Computer Chose --> {cpu_move}", style=self.styles["main"])
     
     def round_state(self, number, user_score, cpu_score):
         self.cons.print(f"|Round {number}| Score -> You: {user_score} | CPU: {cpu_score}", style=self.styles["base"])

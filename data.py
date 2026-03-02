@@ -34,7 +34,8 @@ class Data:
         return best_move[0][0] if best_move else None
         
     def best_move_win_pct(self, best_move):
-        raw_pct = len([x for x in self.round_history if best_move in x]) / (self.rounds_played)
+        
+        raw_pct = len([x for x in self.round_history['win'] if best_move in x]) / (self.rounds_played)
         return round((raw_pct * 100), 2)
 
     def find_games_lost(self):

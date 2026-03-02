@@ -21,7 +21,7 @@ def run():
     
     while True:
         for current_round in range(1, (selected_rounds + 1)):
-            if p1.score > (selected_rounds / 2) or robot.score > (selected_rounds / 2):
+            if abs(p1.score - robot.score) > ((selected_rounds + 1) - current_round):
                 break
 
             ui.round_state(current_round, p1.score, robot.score)
@@ -47,7 +47,7 @@ def run():
             
             if outcome == "win":
                 p1.addpoint()
-            else:
+            elif outcome == "lose":
                 robot.addpoint()
 
             # Displays who won the the round and reveals the robot's move.
@@ -78,7 +78,7 @@ def run():
                 
                 if outcome == "win":
                     p1.addpoint()
-                else:
+                elif outcome == "lose":
                     robot.addpoint()
                 
                 ui.show_round_result(outcome)
@@ -99,9 +99,6 @@ def run():
             best_move = data.find_best_move()
             ui.stats(data.matches_played, data.matches_won, data.find_games_lost(), best_move, data.best_move_win_pct(best_move))
             ui.end_message(p1.name)
-
-            print(data.round_history)
-
             break
             
         p1.reset_score()
