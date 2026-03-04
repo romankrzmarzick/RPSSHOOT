@@ -16,10 +16,11 @@ class Player(Character):
         super().__init__(name)
 
 class Robot(Character):
-    def __init__(self, name="Computer"):
+    def __init__(self, strategy, name="Computer"):
         super().__init__(name)
-    
-    def robot_move(self, moves):
-        return random.choice(list(moves.keys()))
+        self.strategy = strategy
+
+    def robot_move(self, context):
+        return self.strategy.choose_move(context)
         
     

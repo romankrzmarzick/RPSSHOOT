@@ -3,13 +3,18 @@ from ui import Interface
 from player import Player
 from player import Robot
 from data import Data
+from random_ai import RandomAI
 import sys
 
 def run():
+    ai_brain = RandomAI()
+
+
+
     game = Game()
     ui = Interface()
     p1 = Player()
-    robot = Robot()
+    robot = Robot(ai_brain)
     data = Data()
 
     ui.welcome_message()
@@ -20,6 +25,8 @@ def run():
     game.change_rounds(selected_rounds)
     
     while True:
+        
+        
         for current_round in range(1, (selected_rounds + 1)):
             if abs(p1.score - robot.score) > ((selected_rounds + 1) - current_round):
                 break
@@ -35,14 +42,22 @@ def run():
             if user_move == "q":
                 sys.exit()
             
-            # Computer Chooses its move.       
-            cpu_move = robot.robot_move(game.game_mode)
+            # Computer Chooses its move.
+            context = {
+                "rules" : game.game_mode,
+                "data" : data.user_move_history,
+                "user_score" : p1.score,
+                "cpu_score" : robot.score
+            }
+        
+            cpu_move = robot.robot_move(context)
 
             # Decides who wins the current round.
             outcome = game.round_outcome(user_move, cpu_move)
             
             # Data Functions
-            data.record_round(user_move, outcome) 
+            data.record_round(user_move, outcome)
+            data.add_move(user_move) 
             data.add_round()
             
             if outcome == "win":
@@ -74,6 +89,9 @@ def run():
                 cpu_move = robot.robot_move(game.game_mode)
                 user_move = ui.choose_move(game.game_mode)
 
+                if user_move == "q":
+                    sys.exit()
+                    
                 outcome = game.round_outcome(user_move, cpu_move)
                 
                 if outcome == "win":

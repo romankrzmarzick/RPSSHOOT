@@ -1,7 +1,7 @@
 CLASSICAL = {
-    "rock": "scissors", 
-    "paper" :"scissors",
-    "scissors" : "paper"
+    "rock": {"scissors"}, 
+    "paper" : {"rock"},
+    "scissors" : {"paper"}
     }
 
 RPSLS = {

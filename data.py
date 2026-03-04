@@ -5,11 +5,15 @@ class Data:
         self.matches_played = 0
         self.rounds_played = 0
         self.matches_won = 0
+        self.user_move_history = []
         self.round_history = {
             "win" : [],
             "tie" : [],
             "lose" : []
         }
+
+    def add_move(self, user_move):
+        self.user_move_history.append(user_move)
 
     def add_round(self):
         self.rounds_played += 1
@@ -34,7 +38,6 @@ class Data:
         return best_move[0][0] if best_move else None
         
     def best_move_win_pct(self, best_move):
-        
         raw_pct = len([x for x in self.round_history['win'] if best_move in x]) / (self.rounds_played)
         return round((raw_pct * 100), 2)
 
