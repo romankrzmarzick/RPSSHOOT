@@ -31,11 +31,14 @@ class CommonAI:
             return random.choice(list(rules.keys()))
         
         common_move = Counter(data).most_common(1)[0][0]
-        counter_moves = []
-        print(common_move)
-        # for move in rules[common_move]:
-        #     counter_moves.append(move)
-        #     return random.choice()
+        
+        print(f"Common Move: {common_move}")
+        
+        
+        
+        for move in rules[common_move]:
+            counter_moves.append(move)
+            return random.choice()
     
 
 context = {
