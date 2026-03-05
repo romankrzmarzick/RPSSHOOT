@@ -10,8 +10,7 @@ class CommonAI:
             return random.choice(list(rules.keys()))
         
         common_move = Counter(data).most_common(1)[0][0]
-        counter_moves = []
-        for move in rules[common_move]:
-            counter_moves.append(move)
-            return random.choice()
+        counter_moves = [val[0] for val in context['rules'].items() if common_move in val[1]]
+        print(counter_moves)
+        return random.choice(counter_moves)
         

@@ -102,5 +102,5 @@ class Interface:
     def round_state(self, number, user_score, cpu_score):
         self.cons.print(f"|Round {number}| Score -> You: {user_score} | CPU: {cpu_score}", style=self.styles["base"])
 
-    def stats(self, matches_played, matches_won, matches_lost, best_move, pct):
-        self.cons.print(f"Games Played -> {matches_played}\nGames Won -> {matches_won}\nGames Lost -> {matches_lost}\nBest Move -> {pct}% of rounds won used {best_move}")
+    def stats(self, matches_played, matches_won, matches_lost, rounds_won, best_move, pct):
+        self.cons.print(f"Games Played -> {matches_played}\nGames Won -> {matches_won}\nGames Lost -> {matches_lost}\nRounds Won -> {rounds_won}\nBest Move -> {pct}% of rounds won used {best_move}")

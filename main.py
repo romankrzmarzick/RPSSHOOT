@@ -1,20 +1,21 @@
-from game_rules import Game
-from ui import Interface
-from player import Player
-from player import Robot
-from data import Data
-from random_ai import RandomAI
+from scripts.game_rules import Game
+from scripts.ui import Interface
+from scripts.player import Player
+from scripts.player import Robot
+from scripts.data import Data
+from ai_modules.random_ai import RandomAI
+from ai_modules.common_ai import CommonAI
 import sys
 
 def run():
-    ai_brain = RandomAI()
-
+    ai_rand = RandomAI()
+    ai_com = CommonAI()
 
 
     game = Game()
     ui = Interface()
     p1 = Player()
-    robot = Robot(ai_brain)
+    robot = Robot(ai_com)
     data = Data()
 
     ui.welcome_message()
@@ -26,7 +27,14 @@ def run():
     
     while True:
         
-        
+        # Computer Chooses its move.
+        context = {
+            "rules" : game.game_mode,
+            "data" : data.user_move_history,
+            "user_score" : p1.score,
+            "cpu_score" : robot.score
+        }
+
         for current_round in range(1, (selected_rounds + 1)):
             if abs(p1.score - robot.score) > ((selected_rounds + 1) - current_round):
                 break
@@ -42,7 +50,7 @@ def run():
             if user_move == "q":
                 sys.exit()
             
-            # Computer Chooses its move.
+            # Update context for current round
             context = {
                 "rules" : game.game_mode,
                 "data" : data.user_move_history,
@@ -58,7 +66,6 @@ def run():
             # Data Functions
             data.record_round(user_move, outcome)
             data.add_move(user_move) 
-            data.add_round()
             
             if outcome == "win":
                 p1.addpoint()
@@ -86,7 +93,8 @@ def run():
                 if not first_round:
                     ui.show_leader(data.find_leader(p1.score, robot.score))
 
-                cpu_move = robot.robot_move(game.game_mode)
+                cpu_move = robot.robot_move(context)
+
                 user_move = ui.choose_move(game.game_mode)
 
                 if user_move == "q":
@@ -115,7 +123,7 @@ def run():
 
         if not ui.choose_replay():
             best_move = data.find_best_move()
-            ui.stats(data.matches_played, data.matches_won, data.find_games_lost(), best_move, data.best_move_win_pct(best_move))
+            ui.stats(data.matches_played, data.matches_won, data.find_games_lost(), data.find_rounds_won(), best_move, data.best_move_win_pct(best_move))
             ui.end_message(p1.name)
             break
             
