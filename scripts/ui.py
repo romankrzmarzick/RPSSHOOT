@@ -4,19 +4,28 @@ from rich.text import Text
 
 
 GAME_TEXT = {
-    "welcome_msg": (
-        "Welcome to RPSS! Each match is best of three — "
-        "win 2 rounds to win the match. "
-        "|TWIST|: If the match ends in a tie, the winner must "
-        "have two more wins than losses."
-    ),
-    "game_rules" : (
-        "|Games Rules|\nThe user plays the amount of gamess selected, the first to get the best score from the rounds wins."
-        "If scores are still tied, a tiebreaker game commences. In the tiebreaker, the winner must win two times before a loss."
-        "Meaning back to back wins isn't required. A tie is meaningless. Example: Win-Tie-Win = Match Won"
-        "User can also choose between a classical game or RPS with Spock and Lizard (search online for the rules if needed)."
+    "welcome_msg": ("""\
+Welcome to RPSS!
+
+Each match is played as a best-of-three series, meaning the first player to win
+two rounds wins the match.
+
+| TWIST |
+If the match ends in a tie, a tiebreaker begins. During the tiebreaker, the
+winner must have two more wins than losses to claim victory.
+"""
+),
+    "game_rules" : ("""\
+|Game Rules|
+Play the selected number of rounds. Best score wins.
+If tied, a tiebreaker starts: win two rounds before a loss.
+Ties don't count. Example: Win-Tie-Win = Match won.
+Modes: Classic RPS or RPS with Lizard & Spock.
+Moves -> rock(ro), paper(pa), scissors(sc), lizard(li), spock(sp)
+"""
     ),
     "end_msg" : "Thanks for playing and have a splendid day",
+    "invalid" : "[Invalid answer: Enter a valid input]",
 
     # --- Match Decisions ---
     "victory": "YOU WON THE MATCH!",
@@ -32,7 +41,7 @@ GAME_TEXT = {
     "input": "|Exit[q]| |Rules[?]| | What will be your move? |",
     "replay": "Play Again?",
     "game_mode" : "Game Mode Selection",
-    "games" : "|Pick the amount of rounds for the game|",
+    "games" : "How many rounds?",
     
     # --- Tiebreaker Round ---
     "even": "EVEN STEVEN!",
@@ -82,7 +91,14 @@ class Interface:
         return Confirm.ask(Text(GAME_TEXT["replay"], style=self.styles["main"]), console=self.cons)
 
     def choose_move(self, moves):
-        return (Prompt.ask(Text(GAME_TEXT["input"], style=self.styles["main"]), choices=[*moves, "q", "?"], case_sensitive=False, console=self.cons).lower().strip())
+        easy_type = [(val, val[:2]) for val in moves] 
+        easy_type.extend([("quit", "q"), ("question", "?")])
+        while True:
+            choice = Prompt.ask(Text(f"{GAME_TEXT['input']}", style=self.styles["main"])).lower().strip()
+            for i in easy_type:
+                if choice in i:
+                    return i[0]
+            self.cons.print(GAME_TEXT['invalid'], style=self.styles["lose"])
     
     def choose_rounds(self):
         choices = ["3", "5", "7"]
@@ -100,7 +116,7 @@ class Interface:
         self.cons.print(f"Computer Chose --> {cpu_move}", style=self.styles["main"])
     
     def round_state(self, number, user_score, cpu_score):
-        self.cons.print(f"|Round {number}| Score -> You: {user_score} | CPU: {cpu_score}", style=self.styles["base"])
+        self.cons.print(f"|Round {number}| You: {user_score} | CPU: {cpu_score}", style=self.styles["base"])
 
     def stats(self, matches_played, matches_won, matches_lost, rounds_won, best_move, pct):
         self.cons.print(f"Games Played -> {matches_played}\nGames Won -> {matches_won}\nGames Lost -> {matches_lost}\nRounds Won -> {rounds_won}\nBest Move -> {pct}% of rounds won used {best_move}")

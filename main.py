@@ -5,23 +5,25 @@ from scripts.player import Robot
 from scripts.data import Data
 from ai_modules.random_ai import RandomAI
 from ai_modules.common_ai import CommonAI
+from ai_modules.counter_ai import CounterAI
 import sys
 
 def run():
     ai_rand = RandomAI()
     ai_com = CommonAI()
-
+    ai_ctr = CounterAI()
+    
 
     game = Game()
     ui = Interface()
     p1 = Player()
-    robot = Robot(ai_com)
+    robot = Robot(ai_ctr)
     data = Data()
 
     ui.welcome_message()
     
-    selected_rounds = ui.choose_rounds()
     game_version = ui.choose_mode()
+    selected_rounds = ui.choose_rounds()
     game.change_mode(game_version)
     game.change_rounds(selected_rounds)
     
@@ -43,11 +45,11 @@ def run():
 
             while True:
                 user_move = ui.choose_move(game.game_mode)
-                if user_move != "?":
+                if user_move != "question":
                     break
                 ui.game_guide()
                 
-            if user_move == "q":
+            if user_move == "quit":
                 sys.exit()
             
             # Update context for current round
@@ -97,7 +99,7 @@ def run():
 
                 user_move = ui.choose_move(game.game_mode)
 
-                if user_move == "q":
+                if user_move == "quit":
                     sys.exit()
                     
                 outcome = game.round_outcome(user_move, cpu_move)
