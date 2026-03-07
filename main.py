@@ -6,18 +6,19 @@ from scripts.data import Data
 from ai_modules.random_ai import RandomAI
 from ai_modules.common_ai import CommonAI
 from ai_modules.counter_ai import CounterAI
+from ai_modules.markov_ai import MarkovChain
 import sys
 
 def run():
     ai_rand = RandomAI()
     ai_com = CommonAI()
     ai_ctr = CounterAI()
-    
+    ai_markov = MarkovChain()
 
     game = Game()
     ui = Interface()
     p1 = Player()
-    robot = Robot(ai_ctr)
+    robot = Robot(ai_markov)
     data = Data()
 
     ui.welcome_message()
