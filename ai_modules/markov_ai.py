@@ -7,20 +7,22 @@ class MarkovChain:
     
     def figure_markov(self, rules): 
         for i in rules:
-            self.transitions[i] = {}
-            for val in rules:
-                self.transitions[i][val] = 1
+            for x in rules:
+                self.transitions[(i, x)] = {}
+                for val in rules:
+                    self.transitions[(i, x)][val] = 1
     
     def add_pair(self, data):
-        if len(data) >= 2:
-            prev_move, curr_move = data[-2:]
-            self.transitions[prev_move][curr_move] += 1
-            return curr_move
-        elif len(data) >= 1:
-            return data[-1]
+        if len(data) >= 3:
+            prev_1, prev_2, last_move = data[-3:]
+            self.transitions[(prev_1, prev_2)][last_move] += 1
+            return (prev_2, last_move)
+        elif len(data) >= 2:
+            datum_1 , datum_2 = data[-2:]
+            return (datum_1, datum_2)
     
     def weighted_random(self, move):
-        curr_move = move if move else "rock"
+        curr_move = move if move else random.choice(list(self.transitions.keys()))
         possibilites = list(self.transitions[curr_move].keys())
         weights = list(self.transitions[curr_move].values())
         return random.choices(possibilites, weights)[0]
@@ -36,4 +38,5 @@ class MarkovChain:
             self.figure_markov(rules)
         current_move = self.add_pair(data)
         return self.counter_move(self.weighted_random(current_move), rules)
-        
+    
+      

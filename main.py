@@ -129,7 +129,7 @@ def run():
             ui.stats(data.matches_played, data.matches_won, data.find_games_lost(), data.find_rounds_won(), best_move, data.best_move_win_pct(best_move))
             ui.end_message(p1.name)
             break
-            
+        
         p1.reset_score()
         robot.reset_score()
 
