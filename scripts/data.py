@@ -29,16 +29,54 @@ class Data:
                 return "even" 
             return "user" if user_score > cpu_score else "cpu"
         
-    def find_best_move(self):
-        best_move = Counter(self.round_history["win"]).most_common(1)
-        return best_move[0][0] if best_move else None
-        
-    def best_move_win_pct(self, best_move):
-        raw_pct = len([x for x in self.round_history['win'] if best_move in x]) / len(self.round_history['win'])
-        return round((raw_pct * 100), 2)
-
-    def find_games_lost(self):
+    def find_matches_lost(self):
         return (self.matches_played - self.matches_won)
     
     def find_rounds_won(self):
         return len(self.round_history['win'])
+
+    def best_move(self):
+        result = Counter(self.round_history["win"]).most_common(1)
+        return result[0][0] if result else None
+      
+    def best_move_pct(self, best_move):
+        winning_moves = self.round_history['win']
+        
+        if not best_move or not winning_moves:
+            return 0.0
+        
+        best_move_count = winning_moves.count(best_move)
+
+        raw_pct = best_move_count / len(winning_moves)
+        return round((raw_pct * 100), 2)
+
+    def worst_move(self):
+        result = Counter(self.round_history["lose"]).most_common(1)
+        return result[0][0] if result else None
+    
+    def worst_move_pct(self, worst_move):
+        losing_moves = self.round_history['lose']
+
+        if not worst_move or not losing_moves: 
+            return 0.0
+
+        worst_move_count = losing_moves.count(worst_move)
+
+        raw_pct = worst_move_count / len(losing_moves)
+        return round((raw_pct * 100), 2)
+    
+    def stat_summary(self):
+        summary = {
+            "matches_played" : self.matches_played, 
+            "matches_won" : self.matches_won,
+            "matches_lost" : self.find_matches_lost(), 
+            "rounds_won" : self.find_rounds_won(),
+            "best_move" : self.best_move(),
+            "best_pct" : self.best_move_pct(self.best_move()),
+            "worst_move" : self.worst_move(),
+            "worst_pct" : self.worst_move_pct(self.worst_move())
+        }
+        return summary
+
+
+       

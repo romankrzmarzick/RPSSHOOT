@@ -4,7 +4,7 @@ from rich.text import Text
 
 
 GAME_TEXT = {
-    "welcome_msg": ("""\
+    "welcome_msg" : ("""\
 Welcome to RPSS!
 
 Each match is played as a best-of-three series, meaning the first player to win
@@ -28,25 +28,27 @@ Moves -> rock(ro), paper(pa), scissors(sc), lizard(li), spock(sp)
     "invalid" : "[Invalid answer: Enter a valid input]",
 
     # --- Match Decisions ---
-    "victory": "YOU WON THE MATCH!",
-    "defeat": "THE COMPUTER DEFEATED YOU!",
-    "tiebreaker": "TIEBREAKER MATCH!",
+    "victory" : "YOU WON THE MATCH!",
+    "defeat" : "THE COMPUTER DEFEATED YOU!",
+    "tiebreaker" : "TIEBREAKER MATCH!",
    
     # --- Round Decisions --- 
-    "win": "Round Won!",
-    "lose": "Round Lost!",
-    "tie": "Round Tied!",
+    "win" : "Round Won!",
+    "lose" : "Round Lost!",
+    "tie" : "Round Tied!",
     
     # --- Inputs ---
     "input": "|Exit[q]| |Rules[?]| | What will be your move? |",
     "replay": "Play Again?",
     "game_mode" : "Game Mode Selection",
     "games" : "How many rounds?",
-    
+    "name" : "How should we call you?",
+    "ai" : "Choose the ai you want to face",
+
     # --- Tiebreaker Round ---
-    "even": "EVEN STEVEN!",
-    "cpu": "THE COMPUTER IS BEATING YOU!",
-    "user": "ONE MORE WIN AWAY FROM VICTORY!",
+    "even" : "EVEN STEVEN!",
+    "cpu" : "THE COMPUTER IS BEATING YOU!",
+    "user" : "ONE MORE WIN AWAY FROM VICTORY!",
 }
 
 
@@ -100,9 +102,18 @@ class Interface:
                     return i[0]
             self.cons.print(GAME_TEXT['invalid'], style=self.styles["lose"])
     
+    def choose_name(self):
+        while True:
+            name = Prompt.ask(Text(GAME_TEXT["name"], style=self.styles["main"])).lower().strip()
+            if len(name) <= 20:
+                break
+        return name
+    
+    def choose_ai(self):
+        return (Prompt.ask(Text(GAME_TEXT["ai"], style=self.styles["main"]), choices=["random", "common", "counter", "markov"], console=self.cons).lower().strip())
+
     def choose_rounds(self):
-        choices = ["3", "5", "7"]
-        return int(Prompt.ask(Text(GAME_TEXT["games"], style=self.styles["base"]), choices=[*choices], console=self.cons).lower().strip())
+        return int(Prompt.ask(Text(GAME_TEXT["games"], style=self.styles["base"]), choices=["3", "5", "7"], console=self.cons).lower().strip())
 
     def choose_mode(self):
         return (Prompt.ask(Text(GAME_TEXT["game_mode"], style=self.styles["base"]), choices=["Classical", "New"], case_sensitive=False, console=self.cons).lower().strip())
@@ -118,5 +129,5 @@ class Interface:
     def round_state(self, number, user_score, cpu_score):
         self.cons.print(f"|Round {number}| You: {user_score} | CPU: {cpu_score}", style=self.styles["base"])
 
-    def stats(self, matches_played, matches_won, matches_lost, rounds_won, best_move, pct):
-        self.cons.print(f"Games Played -> {matches_played}\nGames Won -> {matches_won}\nGames Lost -> {matches_lost}\nRounds Won -> {rounds_won}\nBest Move -> {pct}% of rounds won used {best_move}")
+    def stat_summary(self, matches_played, matches_won, matches_lost, rounds_won, best_move, best_pct, worst_move, worst_pct):
+        self.cons.print(f"\nGames Played -> {matches_played}\nGames Won -> {matches_won}\nGames Lost -> {matches_lost}\nRounds Won -> {rounds_won}\nBest Move -> {best_pct}% of rounds won used {best_move}\nWorst Move -> {worst_pct}% of rounds lost used {worst_move}")
