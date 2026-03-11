@@ -1,5 +1,3 @@
-import random
-
 class Character:
     def __init__(self, name):
         self.score = 0 
@@ -20,7 +18,7 @@ class Robot(Character):
         super().__init__(name)
         self.strategy = strategy
 
-    def robot_move(self, context):
+    def robot_move(self, context: dict) -> str:
         return self.strategy.choose_move(context)
         
-    
+

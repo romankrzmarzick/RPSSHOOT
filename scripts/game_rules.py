@@ -25,17 +25,22 @@ class Game:
     def change_mode(self, mode):
         self.game_mode = MODES[mode]
 
-    def round_outcome(self, user_move, cpu_move):
+    def round_outcome(self, user_move: str, cpu_move: str) -> str:
         if user_move == cpu_move:
             return "tie"
-        return "win" if cpu_move in self.game_mode[user_move] else "lose"
+        return "win" if cpu_move in self.game_mode.get(user_move, "lose") else "lose"
     
-    def scores_tied(self, user_score, cpu_score):
+    @staticmethod
+    def scores_tied(user_score: int, cpu_score: int) -> bool:
         return user_score == cpu_score
 
-    def tiebreaker_active(self, user_score, cpu_score):
-        return abs(user_score - cpu_score) < 2
-
-    def decide_winner(self, user_score, cpu_score):
+    @staticmethod
+    def decide_winner(user_score: int, cpu_score: int) -> str:
         return "user" if user_score > cpu_score else "cpu"
-   
+    
+    @staticmethod
+    def find_leader(user_score: int, cpu_score: int):
+            if user_score == cpu_score:
+                return "even" 
+            return "user" if user_score > cpu_score else "cpu"
+        

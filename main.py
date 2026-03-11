@@ -78,32 +78,33 @@ def run():
             if abs(player.score - robot.score) > ((chosen_rounds + 1) - current_round):
                 break
             ui.round_state(current_round, player.score, robot.score)
+            
             play_round(context, game, ui, player, robot, data)
       
         if not game.scores_tied(player.score, robot.score):
            finialize_result(game, player, robot, data, ui)
         else:
-            ui.tiebreaker_heading()
-            
+            ui.display_tiebreaker()
             first_round = True
-
-            while game.tiebreaker_active(player.score, robot.score):
-                if not first_round:
-                    ui.show_leader(data.find_leader(player.score, robot.score))
+            
+            while abs(player.score - robot.score) < 2:
+                if not first_round: ui.show_leader(game.find_leader(player.score, robot.score))
 
                 play_round(context, game, ui, player, robot, data)
 
                 first_round = False
 
             finialize_result(game, player, robot, data, ui)
-    
+        
+        # adds match to the data module. 
         data.add_match()
        
         if not ui.choose_replay():
-            ui.stat_summary(**data.stat_summary())
+            ui.show_stats(**data.stat_summary())
             ui.end_message(player.name)
             break
-        
+       
+        # Resets both scores before intializing a new match to ensure fairness.
         player.reset_score()
         robot.reset_score()
 

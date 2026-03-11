@@ -4,6 +4,7 @@ from rich.text import Text
 
 
 GAME_TEXT = {
+    # --- infomational ---
     "welcome_msg" : ("""\
 Welcome to RPSS!
 
@@ -25,7 +26,6 @@ Moves -> rock(ro), paper(pa), scissors(sc), lizard(li), spock(sp)
 """
     ),
     "end_msg" : "Thanks for playing and have a splendid day",
-    "invalid" : "[Invalid answer: Enter a valid input]",
 
     # --- Match Decisions ---
     "victory" : "YOU WON THE MATCH!",
@@ -70,16 +70,16 @@ class Interface:
     def game_guide(self):
         self.cons.print(GAME_TEXT["game_rules"], style=self.styles["fyi"])
 
-    def end_message(self, name):
+    def end_message(self, name: str):
         self.cons.print(f"\n{GAME_TEXT['end_msg']} {name}!", style=self.styles["base"])
     
     # --- Round Decisons ---
-    def show_round_result(self, outcome):
+    def show_round_result(self, outcome: str):
         """The outcome variable will either contain the string 'win', 'lose', or 'tie' for the GAME_TEXT dictionary lookup."""
         self.cons.print(GAME_TEXT[outcome], style=self.styles[outcome])
 
     # --- Match Decisions
-    def tiebreaker_heading(self):
+    def display_tiebreaker(self):
         self.cons.print(GAME_TEXT["tiebreaker"], style=self.styles["main"])
 
     def victory(self):
@@ -93,41 +93,48 @@ class Interface:
         return Confirm.ask(Text(GAME_TEXT["replay"], style=self.styles["main"]), console=self.cons)
 
     def choose_move(self, moves):
-        easy_type = [(val, val[:2]) for val in moves] 
-        easy_type.extend([("quit", "q"), ("question", "?")])
+        possibilities = {
+           "quit" : ["quit", "q"],
+           "question" : ["question", "?"],
+        }
+        possibilities.update({val : [val, val[:2]] for val in moves})
+        
+        selection = [item for sublist in possibilities.values() for item in sublist]
+        output = Prompt.ask(Text(GAME_TEXT['input'], style=self.styles["main"]), show_choices=False, case_sensitive=False, choices=selection, console=self.cons).lower().strip()
+        return next((key for key, value_list in possibilities.items() if output in value_list), "?")
+
+    def choose_name(self) -> str:
         while True:
-            choice = Prompt.ask(Text(f"{GAME_TEXT['input']}", style=self.styles["main"])).lower().strip()
-            for i in easy_type:
-                if choice in i:
-                    return i[0]
-            self.cons.print(GAME_TEXT['invalid'], style=self.styles["lose"])
-    
-    def choose_name(self):
-        while True:
-            name = Prompt.ask(Text(GAME_TEXT["name"], style=self.styles["main"])).lower().strip()
+            name = Prompt.ask(Text(GAME_TEXT["name"], style=self.styles["main"])).lower().title()
+            
             if len(name) <= 20:
                 break
+            elif not len(name):
+                self.cons.print("Name is Empty: enter a valid one please.", style=self.styles["lose"])
+            else:
+                self.cons.print("Name is over 20 Characters: enter a new one please.", style=self.styles["lose"])
+        
         return name
     
-    def choose_ai(self):
-        return (Prompt.ask(Text(GAME_TEXT["ai"], style=self.styles["main"]), choices=["random", "common", "counter", "markov"], console=self.cons).lower().strip())
+    def choose_ai(self) -> str:
+        return (Prompt.ask(Text(GAME_TEXT["ai"], style=self.styles["main"]), case_sensitive=False, choices=["random", "common", "counter", "markov"], console=self.cons).lower().strip())
 
-    def choose_rounds(self):
+    def choose_rounds(self) -> int:
         return int(Prompt.ask(Text(GAME_TEXT["games"], style=self.styles["base"]), choices=["3", "5", "7"], console=self.cons).lower().strip())
 
-    def choose_mode(self):
+    def choose_mode(self) -> str:
         return (Prompt.ask(Text(GAME_TEXT["game_mode"], style=self.styles["base"]), choices=["Classical", "New"], case_sensitive=False, console=self.cons).lower().strip())
     
     # --- State/Stats ---
-    def show_leader(self, leader):
+    def show_leader(self, leader: str):
         """The leader variable will either contain the string 'user', 'cpu', or 'even' for the GAME_TEXT dictionary lookup."""
         self.cons.print(GAME_TEXT[leader], style=self.styles["main"])
 
-    def show_cpu_move(self, cpu_move):
+    def show_cpu_move(self, cpu_move: str):
         self.cons.print(f"Computer Chose --> {cpu_move}", style=self.styles["main"])
     
-    def round_state(self, number, user_score, cpu_score):
+    def round_state(self, number: int, user_score: int, cpu_score: int):
         self.cons.print(f"|Round {number}| You: {user_score} | CPU: {cpu_score}", style=self.styles["base"])
 
-    def stat_summary(self, matches_played, matches_won, matches_lost, rounds_won, best_move, best_pct, worst_move, worst_pct):
+    def show_stats(self, matches_played: int, matches_won: int, matches_lost: int, rounds_won: int, best_move: str, best_pct: float, worst_move: str, worst_pct: float):
         self.cons.print(f"\nGames Played -> {matches_played}\nGames Won -> {matches_won}\nGames Lost -> {matches_lost}\nRounds Won -> {rounds_won}\nBest Move -> {best_pct}% of rounds won used {best_move}\nWorst Move -> {worst_pct}% of rounds lost used {worst_move}")
