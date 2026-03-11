@@ -107,7 +107,7 @@ class Interface:
         while True:
             name = Prompt.ask(Text(GAME_TEXT["name"], style=self.styles["main"])).lower().title()
             
-            if len(name) <= 20:
+            if 0 < len(name) <= 21:
                 break
             elif not len(name):
                 self.cons.print("Name is Empty: enter a valid one please.", style=self.styles["lose"])
