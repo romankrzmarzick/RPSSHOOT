@@ -1,40 +1,38 @@
-# RPS SHOOT
+# RPS SHOOT 🖖
 
-RPS SHOOT is an exciting twist on the classic Rock-Paper-Scissors game, introducing the elements of Spock and Lizard for expanded gameplay.
+RPS SHOOT is a highly modular, advanced terminal-based implementation of Rock-Paper-Scissors-Lizard-Spock, written entirely in Python. 
 
-## Gameplay
+While it functions as a playable game, under the hood, it serves as an exploration of Object-Oriented Programming (OOP) architecture, structural design patterns, and statistical Artificial Intelligence.
 
-In RPS SHOOT, players compete against each other or an AI opponent using the five gestures: Rock, Paper, Scissors, Spock, and Lizard.
+## 🚀 Features
 
-- **Rock** crushes Scissors and crushes Lizard.
-- **Paper** covers Rock and disproves Spock.
-- **Scissors** cuts Paper and decapitates Lizard.
-- **Spock** smashes Scissors and vaporizes Rock.
-- **Lizard** poisons Spock and eats Paper.
+- **Dynamic Game Engine:** Play classic Rock-Paper-Scissors or the expanded 5-move "Lizard Spock" variation.
+- **Advanced AI Opponents:** Battle against 4 different AI algorithms, ranging from purely random to a predictive, 2nd-order statistical Markov Chain.
+- **Beautiful Terminal UI:** Built with the `rich` Python library for a styled, color-coded, and interactive command-line experience.
+- **Robust Data Tracking:** The game tracks and calculates match history, win percentages, and your most/least successful moves.
+- **Tiebreaker Logic:** Matches are played as a "Best-of" series. If a match ends in a tie, a "Win-by-Two" sudden-death tiebreaker automatically initiates.
 
-## Game Modes
+## 🧠 The AI Opponents
 
-### 1. Single Player
-- Play against the AI. Choose your gesture and try to defeat the computer.
+The computer opponent is built using the **Strategy Pattern**, allowing it to swap "brains" based on user selection dynamically:
 
-### 2. Multiplayer
-- Challenge your friends in one-on-one matches. Best of three rounds to win the game.
+1. **Random AI:** The baseline bot. It picks a completely random valid move every turn.
+2. **Common AI:** A basic analytical bot that finds the player's most frequently used move overall and plays its exact counter.
+3. **Counter AI:** A reactive bot that simply looks at the player's *last* move and assumes they will play it again, playing the counter.
+4. **Markov AI:** The "Boss" bot. It utilizes a 2nd-Order Markov Chain to build a statistical model of the player's habits. It looks at the player's last two moves, calculates the probability of their third move based on historical data, and throws the exact counter.
 
-### 3. Tournament
-- Compete in a brackets-style tournament where you can face multiple opponents to claim victory.
+## 🏗️ Architecture & Code Quality
 
-## Features
-- **Interactive UI**: An intuitive interface that makes gameplay engaging and fun.
-- **Sound Effects**: Enjoy the sound effects that enhance the gaming experience.
-- **Customization**: Players can customize their avatars and gestures.
+This project was built with a focus on clean, scalable software engineering principles:
+- **Separation of Concerns:** The codebase is strictly divided into `main.py` (orchestration), `ui.py` (presentation), `data.py` (state management), and `game_rules.py` (logic).
+- **The Factory Pattern:** AI models are instantiated dynamically via dictionary lookups rather than massive `if/else` blocks.
+- **Automated Testing:** The logic is verified using a comprehensive `pytest` suite, including edge-case handling, integration tests, and user-input mocking via `@patch`.
 
-## AI Difficulty Levels
-- **Easy**: The AI randomly chooses gestures.
-- **Medium**: The AI learns from the player's previous gestures.
-- **Hard**: The AI uses advanced strategies to counter the player's moves. Expect a challenge!
+## 🎮 How to Play
 
-## Getting Started
-To get started, clone the repository and run the game in your preferred environment. Detailed instructions can be found in the installation section.
+### Prerequisites
+You will need Python 3 installed, along with the `rich` library for the terminal UI.
 
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+```bash
+# Install the required UI library
+pip install rich
