@@ -137,4 +137,4 @@ class Interface:
         self.cons.print(f"|Round {number}| You: {user_score} | CPU: {cpu_score}", style=self.styles["base"])
 
     def show_stats(self, matches_played: int, matches_won: int, matches_lost: int, rounds_won: int, best_move: str, best_pct: float, worst_move: str, worst_pct: float):
-        self.cons.print(f"\nGames Played -> {matches_played}\nGames Won -> {matches_won}\nGames Lost -> {matches_lost}\nRounds Won -> {rounds_won}\nBest Move -> {best_pct}% of rounds won used {best_move}\nWorst Move -> {worst_pct}% of rounds lost used {worst_move}")
+        self.cons.print(f"\n+----------------------------------------+\nGames Played -> {matches_played}\nGames Won -> {matches_won}\nGames Lost -> {matches_lost}\nRounds Won -> {rounds_won}\nBest Move -> {best_pct}% of rounds won used {best_move}\nWorst Move -> {worst_pct}% of rounds lost used {worst_move}\n+----------------------------------------+")

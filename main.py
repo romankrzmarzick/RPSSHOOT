@@ -80,7 +80,7 @@ def run():
             ui.round_state(current_round, player.score, robot.score)
             
             play_round(context, game, ui, player, robot, data)
-      
+
         if not game.scores_tied(player.score, robot.score):
            finialize_result(game, player, robot, data, ui)
         else:
@@ -91,7 +91,6 @@ def run():
                 if not first_round: ui.show_leader(game.find_leader(player.score, robot.score))
 
                 play_round(context, game, ui, player, robot, data)
-
                 first_round = False
 
             finialize_result(game, player, robot, data, ui)
